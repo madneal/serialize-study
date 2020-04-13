@@ -1,4 +1,4 @@
-package Serial;
+package Step1;
 
 import java.io.*;
 
@@ -14,7 +14,7 @@ public class deserTest implements Serializable {
     public static void main(String[] args) {
         deserTest x = new deserTest(5);
         operation.ser(x);
-        operation.dser();
+        operation.deser();
     }
 }
 
@@ -32,7 +32,7 @@ class operation {
         }
     }
 
-    public static void dser() {
+    public  static void deser() {
         try {
             File file = new File("object.obj");
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
