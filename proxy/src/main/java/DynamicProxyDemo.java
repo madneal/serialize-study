@@ -1,21 +1,25 @@
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 public class DynamicProxyDemo {
     public static void main(String[] args) {
-        Animals
+        Animals cat = new Cat();
+        InvocationHandler handler = (InvocationHandler) new CatProxyHandler(cat);
+        Animals catProxy = (Animals) Proxy.newProxyInstance(Cat.class.getClassLoader(), Cat.class.getInterfaces(), handler);
+        catProxy.say();
     }
 }
 
-interface Animals {
-    void say();
-}
-
-class Cat implements Animals {
-    public void say() {
-        System.out.println("I am a cat!");
-    }
-}
+//interface Animals {
+//    void say();
+//}
+//
+//class Cat implements Animals {
+//    public void say() {
+//        System.out.println("I am a cat!");
+//    }
+//}
 
 class CatProxyHandler implements InvocationHandler {
     private Object obj;
