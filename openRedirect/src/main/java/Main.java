@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         String[] whiteHosts = new String[]{"whitehost"};
-        String evilUrl = "https://evilhost@whitehost";
+        String evilUrl = "https://evilhost\\@whitehost";
         URL url = UrlUtils.parseURL(evilUrl, null);
         System.out.println(url.getHost());
         System.out.println(whitehostCheck(whiteHosts, url.getHost()));
